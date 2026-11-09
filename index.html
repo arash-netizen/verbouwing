@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Verbouwing">
+<meta name="theme-color" content="#1f5f8b">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%231f5f8b'/%3E%3Cpath d='M14 32 32 16l18 16v18H38V38H26v12H14z' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%231f5f8b'/%3E%3Cpath d='M14 32 32 16l18 16v18H38V38H26v12H14z' fill='%23fff'/%3E%3C/svg%3E">
+<title>Verbouwing Leliehof</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  /* Bouwtekening-blauw met signaaloranje; links ruimtes/fases, rechts details */
+  --bg:#f3f5f7; --surface:#ffffff; --ink:#17212b; --muted:#5d6b78; --line:#dbe1e7;
+  --accent:#1f5f8b; --accent-soft:#e3eef6; --signal:#d9661f;
+  --ok:#2e7d4f; --warn:#b7791f; --bad:#b83a3a;
+  --display:"Fraunces",Georgia,serif; --body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#11171d; --surface:#1a222a; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3843;
+  --accent:#6fb0dd; --accent-soft:#1d3346; --signal:#f08a4b; --ok:#5cc28a; --warn:#e0b04f; --bad:#e57373; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --bg:#11171d; --surface:#1a222a; --ink:#e6ecf1; --muted:#9aa8b5; --line:#2c3843;
+  --accent:#6fb0dd; --accent-soft:#1d3346; --signal:#f08a4b; --ok:#5cc28a; --warn:#e0b04f; --bad:#e57373; color-scheme:dark;}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.5 var(--body)}
+header{padding:20px 16px 8px;max-width:1200px;margin:0 auto;display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;justify-content:space-between}
+h1{font:700 28px/1.1 var(--display);margin:0;text-wrap:balance}
+.sub{color:var(--muted);font-size:13px}
+main{max-width:1200px;margin:0 auto;padding:0 16px 48px;display:grid;gap:16px}
+.tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:4px}
+.tabs button{border:0;background:none;color:var(--muted);font:500 14px var(--body);padding:7px 14px;border-radius:7px;cursor:pointer}
+.tabs button[aria-pressed="true"]{background:var(--accent);color:#fff}
+button{font-family:var(--body)}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--signal);outline-offset:2px}
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 14px}
+.tile b{display:block;font:600 22px var(--body);font-variant-numeric:tabular-nums}
+.tile span{color:var(--muted);font-size:12px}
+.next{background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--signal);border-radius:10px;padding:12px 16px}
+.next h2{font:600 15px var(--body);margin:0 0 6px}
+.next ol{margin:0;padding-left:20px}
+.next li{padding:2px 0}
+.next a{color:var(--accent);font-weight:500}
+.next .where{color:var(--muted);font-size:13px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;border-radius:8px;cursor:pointer;font-size:14px}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.small{padding:3px 8px;font-size:12px}
+.btn.danger{color:var(--bad)}
+select.filter{padding:6px 8px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink);font:14px var(--body)}
+.floor{display:grid;gap:10px}
+.floor>h2{font:600 13px var(--body);text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:8px 0 0}
+.rooms{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:12px}
+.room{background:var(--surface);border:1px solid var(--line);border-radius:12px;display:flex;flex-direction:column}
+.room-h{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:12px 14px 8px;border-bottom:1px solid var(--line)}
+.room-h h3{font:600 18px/1.2 var(--display);margin:0}
+.room-h .meta{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.bar{height:4px;background:var(--line);border-radius:2px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;background:var(--ok)}
+.tasks{list-style:none;margin:0;padding:6px 8px;display:grid;gap:2px}
+.task{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:start;padding:7px 6px;border-radius:8px;cursor:pointer}
+.task:hover{background:var(--accent-soft)}
+.task .t{font-weight:500}
+.task.done .t{text-decoration:line-through;color:var(--muted)}
+.task .d{font-size:12px;color:var(--muted)}
+.task .blocked{color:var(--warn)}
+.task .conflict{color:var(--bad)}
+.dot{width:10px;height:10px;border-radius:50%;margin-top:6px;flex:none}
+.pill{font-size:11px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap;border:1px solid currentColor}
+.ph{font-size:11px;color:var(--muted);white-space:nowrap}
+.add{border:0;background:none;color:var(--accent);text-align:left;padding:8px 14px 12px;cursor:pointer;font-size:14px}
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.phase-h{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:baseline;flex-wrap:wrap}
+.phase-h h3{font:600 19px var(--display);margin:0}
+.phase-h .n{font:700 13px var(--body);color:#fff;background:var(--accent);border-radius:6px;padding:1px 8px}
+.phase-h p{margin:0;color:var(--muted);font-size:13px}
+.seq{list-style:none;margin:0;padding:6px 10px}
+.seq li{display:grid;grid-template-columns:auto auto 1fr auto auto;gap:10px;align-items:center;padding:7px 4px;border-bottom:1px dashed var(--line)}
+.seq li:last-child{border-bottom:0}
+.seq .room-tag{font-size:12px;color:var(--muted)}
+.seq .mv{display:flex;gap:2px}
+.empty{color:var(--muted);padding:10px 14px;font-size:14px}
+.notice{background:var(--accent-soft);border-radius:8px;padding:8px 12px;font-size:13px}
+dialog{border:1px solid var(--line);border-radius:14px;padding:0;background:var(--surface);color:var(--ink);width:min(560px,calc(100% - 24px))}
+dialog::backdrop{background:rgba(10,20,30,.45)}
+form.edit{display:grid;gap:12px;padding:18px}
+form.edit h2{font:600 20px var(--display);margin:0}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+label{display:grid;gap:4px;font-size:13px;color:var(--muted)}
+input,select,textarea{font:15px var(--body);color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+textarea{min-height:70px;resize:vertical}
+.deps{max-height:170px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg);display:grid;gap:2px}
+.deps label{display:flex;gap:8px;align-items:center;color:var(--ink);font-size:14px}
+.actions{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.actions div{display:flex;gap:8px}
+[hidden]{display:none!important}
+@media (max-width:520px){.grid2{grid-template-columns:1fr}.seq li{grid-template-columns:auto 1fr auto}.seq .room-tag,.seq .mv{display:none}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Verbouwing Leliehof</h1>
+    <div class="sub" id="subline"><span id="syncState">Laden…</span></div>
+  </div>
+  <div class="tabs" id="tabs" role="group" aria-label="Weergave">
+    <button id="tabRooms" aria-pressed="true">Per ruimte</button>
+    <button id="tabSeq" aria-pressed="false">Volgorde</button>
+  </div>
+</header>
+<main id="app">
+  <div id="notice"></div>
+  <section class="summary" id="summary"></section>
+  <section class="next" id="next"></section>
+  <div class="toolbar">
+    <button class="btn primary" id="addTask">+ Taak</button>
+    <button class="btn" id="addRoom">+ Ruimte</button>
+    <select class="filter" id="statusFilter" aria-label="Filter op status">
+      <option value="">Alle statussen</option>
+      <option value="open">Alles behalve klaar</option>
+    </select>
+  </div>
+  <div id="view"></div>
+</main>
+
+<dialog id="taskDlg">
+  <form class="edit" id="taskForm">
+    <h2 id="taskDlgTitle">Taak</h2>
+    <label>Wat moet er gebeuren<input id="fTitle" required maxlength="140"></label>
+    <div class="grid2">
+      <label>Ruimte<select id="fRoom"></select></label>
+      <label>Fase<select id="fPhase"></select></label>
+      <label>Status<select id="fStatus"></select></label>
+      <label>Wie (jullie of bedrijf)<input id="fWho" maxlength="80"></label>
+      <label>Budget / offerte (€)<input id="fCost" type="number" min="0" step="50" inputmode="numeric"></label>
+      <label>Gepland (maand)<input id="fWhen" type="month"></label>
+    </div>
+    <label>Moet eerst klaar zijn<div class="deps" id="fDeps"></div></label>
+    <label>Notities<textarea id="fNotes" maxlength="2000"></textarea></label>
+    <div class="actions">
+      <button type="button" class="btn danger" id="delTask">Verwijderen</button>
+      <div><button type="button" class="btn" id="cancelTask">Annuleren</button><button type="submit" class="btn primary">Opslaan</button></div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="roomDlg">
+  <form class="edit" id="roomForm">
+    <h2 id="roomDlgTitle">Ruimte</h2>
+    <label>Naam<input id="rName" required maxlength="60"></label>
+    <label>Verdieping<select id="rFloor"></select></label>
+    <div class="actions">
+      <button type="button" class="btn danger" id="delRoom">Verwijderen</button>
+      <div><button type="button" class="btn" id="cancelRoom">Annuleren</button><button type="submit" class="btn primary">Opslaan</button></div>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="confirmDlg">
+  <form class="edit" id="confirmForm">
+    <h2 id="confirmMsg">Zeker weten?</h2>
+    <div class="actions"><span></span><div><button type="button" class="btn" id="confirmNo">Nee</button><button type="submit" class="btn danger">Ja, verwijderen</button></div></div>
+  </form>
+</dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script>
+const FLOORS=["Hele huis","Begane grond","1e verdieping","Zolder","Buiten"];
+const PHASES=[
+  {n:0,name:"Ontwerp & voorbereiding",desc:"Indeling, vergunningen, offertes en budget"},
+  {n:1,name:"Schil & installaties",desc:"Dak, stroom, warmtepomp, zonnepanelen"},
+  {n:2,name:"Per verdieping",desc:"Slopen, leidingen, vloerverwarming, badkamer, elektra"},
+  {n:3,name:"Afwerking & interieur",desc:"Vloeren, keuken, schilderwerk, inrichting"}
+];
+const STATUSES=[
+  {k:"idee",l:"Idee",c:"var(--muted)"},
+  {k:"todo",l:"Te doen",c:"var(--accent)"},
+  {k:"offerte",l:"Offerte",c:"var(--warn)"},
+  {k:"gepland",l:"Gepland",c:"var(--signal)"},
+  {k:"bezig",l:"Bezig",c:"#8a4fbf"},
+  {k:"klaar",l:"Klaar",c:"var(--ok)"}
+];
+const ST=Object.fromEntries(STATUSES.map(s=>[s.k,s]));
+let rooms=[],tasks=[],db=null,canWrite=true,view="rooms",editing=null,editingRoom=null;
+try{const h=location.hash.slice(1);if(h==="volgorde")view="seq";}catch(e){}
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const eur=n=>"€ "+Math.round(n).toLocaleString("nl-NL");
+const byId=id=>tasks.find(t=>t.id===id);
+const roomName=id=>(rooms.find(r=>r.id===id)||{}).name||"Zonder ruimte";
+const sortTasks=a=>a.slice().sort((x,y)=>(x.phase-y.phase)||((x.order??999)-(y.order??999))||x.title.localeCompare(y.title));
+function waitingOn(t){return (t.dependsOn||[]).map(byId).filter(d=>d&&d.status!=="klaar");}
+function conflicts(t){return (t.dependsOn||[]).map(byId).filter(d=>d&&d.phase>t.phase);}
+function fmtMonth(m){if(!m)return"";const [y,mo]=m.split("-");return ["jan","feb","mrt","apr","mei","jun","jul","aug","sep","okt","nov","dec"][+mo-1]+" "+y;}
+
+function setTab(v){view=v;$("tabRooms").setAttribute("aria-pressed",v==="rooms");$("tabSeq").setAttribute("aria-pressed",v==="seq");try{history.replaceState(null,"",v==="seq"?"#volgorde":"#ruimtes");}catch(e){}render();}
+$("tabRooms").onclick=()=>setTab("rooms");$("tabSeq").onclick=()=>setTab("seq");
+$("statusFilter").innerHTML+=STATUSES.map(s=>`<option value="${s.k}">${s.l}</option>`).join("");
+$("statusFilter").onchange=render;
+function passFilter(t){const f=$("statusFilter").value;if(!f)return true;if(f==="open")return t.status!=="klaar";return t.status===f;}
+
+function taskRow(t){
+  const s=ST[t.status]||ST.todo,w=waitingOn(t),c=conflicts(t);
+  const bits=[];
+  if(t.who)bits.push(esc(t.who));
+  if(t.when)bits.push(fmtMonth(t.when));
+  if(t.cost)bits.push(eur(t.cost));
+  let extra="";
+  if(w.length&&t.status!=="klaar")extra+=`<div class="d blocked">Wacht op: ${w.map(d=>esc(d.title)).join(", ")}</div>`;
+  if(c.length)extra+=`<div class="d conflict">Let op: hangt af van iets in een latere fase</div>`;
+  return `<li class="task ${t.status==="klaar"?"done":""}" data-task="${esc(t.id)}" tabindex="0">
+    <span class="dot" style="background:${s.c}"></span>
+    <div><div class="t">${esc(t.title)}</div>${bits.length?`<div class="d">${bits.join(" · ")}</div>`:""}${extra}</div>
+    <div style="display:grid;gap:3px;justify-items:end"><span class="pill" style="color:${s.c}">${s.l}</span><span class="ph">Fase ${t.phase}</span></div>
+  </li>`;
+}
+
+function renderSummary(){
+  const open=tasks.filter(t=>t.status!=="klaar");
+  const blocked=open.filter(t=>waitingOn(t).length);
+  const done=tasks.length-open.length;
+  const budget=tasks.reduce((a,t)=>a+(+t.cost||0),0);
+  const pct=tasks.length?Math.round(done/tasks.length*100):0;
+  $("summary").innerHTML=`
+    <div class="tile"><b>${open.length}</b><span>open taken</span></div>
+    <div class="tile"><b>${blocked.length}</b><span>wachten op iets anders</span></div>
+    <div class="tile"><b>${pct}%</b><span>klaar (${done} van ${tasks.length})</span></div>
+    <div class="tile"><b>${budget?eur(budget):"–"}</b><span>budget ingevuld${budget?" (+10–15% onvoorzien)":""}</span></div>`;
+  const ready=sortTasks(open.filter(t=>!waitingOn(t).length&&t.status!=="idee")).slice(0,5);
+  $("next").innerHTML=`<h2>Nu oppakken</h2>`+(ready.length?`<ol>${ready.map(t=>`<li><a href="#" data-task="${esc(t.id)}">${esc(t.title)}</a> <span class="where">· ${esc(roomName(t.room))} · ${ST[t.status].l}</span></li>`).join("")}</ol>`:`<div class="where">Niets dat nu direct kan, of alles is klaar.</div>`);
+}
+
+function renderRooms(){
+  const out=[];
+  for(const f of FLOORS){
+    const rs=rooms.filter(r=>r.floor===f).sort((a,b)=>(a.order??0)-(b.order??0)||a.name.localeCompare(b.name));
+    if(!rs.length)continue;
+    out.push(`<section class="floor"><h2>${esc(f)}</h2><div class="rooms">`+rs.map(r=>{
+      const all=tasks.filter(t=>t.room===r.id),ts=sortTasks(all.filter(passFilter));
+      const done=all.filter(t=>t.status==="klaar").length,cost=all.reduce((a,t)=>a+(+t.cost||0),0);
+      return `<article class="room"><div class="room-h"><div style="flex:1"><h3>${esc(r.name)}</h3>
+        <div class="meta">${done}/${all.length} klaar${cost?" · "+eur(cost):""}</div><div class="bar"><i style="width:${all.length?done/all.length*100:0}%"></i></div></div>
+        ${canWrite?`<button class="btn small" data-editroom="${esc(r.id)}" aria-label="Ruimte ${esc(r.name)} bewerken">Bewerk</button>`:""}</div>
+        ${ts.length?`<ul class="tasks">${ts.map(taskRow).join("")}</ul>`:`<div class="empty">${all.length?"Geen taken met deze status.":"Nog niets genoteerd."}</div>`}
+        ${canWrite?`<button class="add" data-addin="${esc(r.id)}">+ Taak in ${esc(r.name)}</button>`:""}</article>`;
+    }).join("")+`</div></section>`);
+  }
+  const orphan=tasks.filter(t=>!rooms.find(r=>r.id===t.room));
+  if(orphan.length)out.push(`<section class="floor"><h2>Zonder ruimte</h2><div class="rooms"><article class="room"><ul class="tasks">${sortTasks(orphan).map(taskRow).join("")}</ul></article></div></section>`);
+  return out.join("")||`<div class="empty">Nog geen ruimtes. Voeg er een toe met “+ Ruimte”.</div>`;
+}
+
+function renderSeq(){
+  return PHASES.map(p=>{
+    const ts=sortTasks(tasks.filter(t=>t.phase===p.n&&passFilter(t)));
+    return `<section class="phase"><div class="phase-h"><span class="n">${p.n}</span><h3>${esc(p.name)}</h3><p>${esc(p.desc)}</p></div>
+    ${ts.length?`<ol class="seq">${ts.map((t,i)=>{const s=ST[t.status]||ST.todo,w=waitingOn(t),c=conflicts(t);
+      return `<li><span class="ph" style="font-variant-numeric:tabular-nums">${i+1}</span><span class="dot" style="background:${s.c};margin:0"></span>
+      <div><a href="#" data-task="${esc(t.id)}" style="color:inherit;font-weight:500">${esc(t.title)}</a>
+        ${w.length&&t.status!=="klaar"?`<div class="d blocked" style="font-size:12px">Wacht op: ${w.map(d=>esc(d.title)).join(", ")}</div>`:""}
+        ${c.length?`<div class="conflict" style="font-size:12px">Hangt af van: ${c.map(d=>esc(d.title)+" (fase "+d.phase+")").join(", ")}</div>`:""}</div>
+      <span class="room-tag">${esc(roomName(t.room))}</span>
+      ${canWrite?`<span class="mv"><button class="btn small" data-move="${esc(t.id)}" data-dir="-1" aria-label="Eerder">↑</button><button class="btn small" data-move="${esc(t.id)}" data-dir="1" aria-label="Later">↓</button></span>`:"<span></span>"}</li>`;}).join("")}</ol>`:`<div class="empty">Geen taken in deze fase.</div>`}</section>`;
+  }).join("");
+}
+
+function render(){
+  renderSummary();
+  $("view").innerHTML=view==="rooms"?`<div style="display:grid;gap:14px">${renderRooms()}</div>`:`<div style="display:grid;gap:12px">${renderSeq()}</div>`;
+  $("addTask").hidden=!canWrite;$("addRoom").hidden=!canWrite;
+}
+
+document.addEventListener("click",e=>{
+  const tk=e.target.closest("[data-task]");if(tk){e.preventDefault();openTask(byId(tk.dataset.task));return;}
+  const ai=e.target.closest("[data-addin]");if(ai){openTask(null,ai.dataset.addin);return;}
+  const er=e.target.closest("[data-editroom]");if(er){openRoom(rooms.find(r=>r.id===er.dataset.editroom));return;}
+  const mv=e.target.closest("[data-move]");if(mv){move(mv.dataset.move,+mv.dataset.dir);return;}
+});
+document.addEventListener("keydown",e=>{if(e.key==="Enter"&&e.target.matches&&e.target.matches("li[data-task]")){openTask(byId(e.target.dataset.task));}});
+
+/* --- Taakdialoog --- */
+$("fPhase").innerHTML=PHASES.map(p=>`<option value="${p.n}">${p.n} · ${esc(p.name)}</option>`).join("");
+$("fStatus").innerHTML=STATUSES.map(s=>`<option value="${s.k}">${s.l}</option>`).join("");
+$("rFloor").innerHTML=FLOORS.map(f=>`<option>${esc(f)}</option>`).join("");
+function openTask(t,roomId){
+  if(!canWrite&&!t)return;
+  editing=t||null;
+  $("taskDlgTitle").textContent=t?"Taak bewerken":"Nieuwe taak";
+  $("fRoom").innerHTML=FLOORS.flatMap(f=>rooms.filter(r=>r.floor===f).map(r=>`<option value="${esc(r.id)}">${esc(f)} · ${esc(r.name)}</option>`)).join("");
+  $("fTitle").value=t?.title||"";$("fRoom").value=t?.room||roomId||rooms[0]?.id||"";
+  $("fPhase").value=t?.phase??(rooms.find(r=>r.id===roomId)?.floor==="Hele huis"?1:2);
+  $("fStatus").value=t?.status||"todo";$("fWho").value=t?.who||"";$("fCost").value=t?.cost||"";$("fWhen").value=t?.when||"";$("fNotes").value=t?.notes||"";
+  const deps=new Set(t?.dependsOn||[]);
+  $("fDeps").innerHTML=sortTasks(tasks.filter(x=>!t||x.id!==t.id)).map(x=>`<label><input type="checkbox" value="${esc(x.id)}" ${deps.has(x.id)?"checked":""}> ${esc(x.title)} <span class="ph">· ${esc(roomName(x.room))}</span></label>`).join("")||`<span class="ph">Nog geen andere taken.</span>`;
+  $("delTask").hidden=!t||!canWrite;
+  [...$("taskForm").elements].forEach(el=>{if(el.id!=="cancelTask")el.disabled=!canWrite;});
+  $("taskDlg").showModal();
+}
+$("cancelTask").onclick=()=>$("taskDlg").close();
+$("taskForm").onsubmit=async e=>{
+  e.preventDefault();if(!canWrite)return;
+  const phase=+$("fPhase").value;
+  const data={title:$("fTitle").value.trim(),room:$("fRoom").value,phase,status:$("fStatus").value,
+    who:$("fWho").value.trim(),cost:$("fCost").value?+$("fCost").value:0,when:$("fWhen").value||"",notes:$("fNotes").value.trim(),
+    dependsOn:[...$("fDeps").querySelectorAll("input:checked")].map(i=>i.value),
+    order:editing&&editing.phase===phase?(editing.order??999):Math.max(0,...tasks.filter(t=>t.phase===phase).map(t=>t.order??0))+1};
+  $("taskDlg").close();
+  const id=editing?editing.id:"t"+Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  await save("tasks",id,data);
+};
+$("delTask").onclick=()=>{const t=editing;$("taskDlg").close();confirmDo(`“${t.title}” verwijderen?`,async()=>{
+  for(const o of tasks.filter(x=>(x.dependsOn||[]).includes(t.id))){await save("tasks",o.id,{...strip(o),dependsOn:o.dependsOn.filter(d=>d!==t.id)});}
+  await remove("tasks",t.id);});};
+
+/* --- Ruimtedialoog --- */
+function openRoom(r){editingRoom=r||null;$("roomDlgTitle").textContent=r?"Ruimte bewerken":"Nieuwe ruimte";$("rName").value=r?.name||"";$("rFloor").value=r?.floor||"Begane grond";$("delRoom").hidden=!r;$("roomDlg").showModal();}
+$("addRoom").onclick=()=>openRoom(null);$("addTask").onclick=()=>openTask(null);
+$("cancelRoom").onclick=()=>$("roomDlg").close();
+$("roomForm").onsubmit=async e=>{e.preventDefault();const data={name:$("rName").value.trim(),floor:$("rFloor").value,order:editingRoom?.order??rooms.length};$("roomDlg").close();
+  await save("rooms",editingRoom?editingRoom.id:"r"+Date.now().toString(36),data);};
+$("delRoom").onclick=()=>{const r=editingRoom;$("roomDlg").close();const n=tasks.filter(t=>t.room===r.id).length;
+  confirmDo(`Ruimte “${r.name}” verwijderen?${n?` De ${n} taken blijven bestaan onder “Zonder ruimte”.`:""}`,()=>remove("rooms",r.id));};
+
+let confirmFn=null;
+function confirmDo(msg,fn){confirmFn=fn;$("confirmMsg").textContent=msg;$("confirmDlg").showModal();}
+$("confirmNo").onclick=()=>$("confirmDlg").close();
+$("confirmForm").onsubmit=async e=>{e.preventDefault();$("confirmDlg").close();if(confirmFn)await confirmFn();};
+
+async function move(id,dir){
+  const t=byId(id);const list=sortTasks(tasks.filter(x=>x.phase===t.phase));const i=list.indexOf(t),j=i+dir;
+  if(j<0||j>=list.length)return;
+  [list[i],list[j]]=[list[j],list[i]];
+  for(let k=0;k<list.length;k++){if(list[k].order!==k){await save("tasks",list[k].id,{...strip(list[k]),order:k});}}
+}
+function strip(t){const {id,...rest}=t;return rest;}
+
+/* --- Instellingen: vul deze twee in (Supabase > Project Settings > API) --- */
+const SUPABASE_URL="https://bsmbmcpgdsxatdfrhsln.supabase.co";
+const SUPABASE_KEY="sb_publishable_B0zqZpWeXBmRmAD9jVaCow_oHzxjQhe";
+
+/* --- Opslag (Supabase) --- */
+let sb=null,channel=null;
+function setLocal(col,id,data){const arr=col==="tasks"?tasks:rooms;const i=arr.findIndex(x=>x.id===id);const o={id,...data,...(col==="tasks"?{phase:+(data.phase??0)}:{})};if(i>=0)arr[i]=o;else arr.push(o);}
+function dropLocal(col,id){if(col==="tasks")tasks=tasks.filter(t=>t.id!==id);else rooms=rooms.filter(r=>r.id!==id);}
+async function save(col,id,data){
+  setLocal(col,id,data);render();
+  const {error}=await sb.from("items").upsert({collection:col,id,data,updated_at:new Date().toISOString()});
+  if(error)handleErr(error);
+}
+async function remove(col,id){
+  dropLocal(col,id);render();
+  const {error}=await sb.from("items").delete().eq("collection",col).eq("id",id);
+  if(error)handleErr(error);
+}
+function handleErr(err){console.error(err);showNotice("Opslaan lukte niet ("+(err.message||"onbekende fout")+"). Herlaad de pagina en probeer het opnieuw.");}
+function showNotice(m){$("notice").innerHTML=m?`<div class="notice">${esc(m)}</div>`:"";}
+
+async function loadAll(){
+  const {data,error}=await sb.from("items").select("collection,id,data");
+  if(error){$("syncState").textContent="Laden mislukt: "+error.message;return;}
+  rooms=data.filter(r=>r.collection==="rooms").map(r=>({id:r.id,...r.data}));
+  tasks=data.filter(r=>r.collection==="tasks").map(r=>({id:r.id,...r.data,phase:+(r.data.phase??0)}));
+  $("syncState").textContent="Gedeeld en live bijgewerkt · Prinsenbeek";
+  render();
+}
+function subscribe(){
+  if(channel)return;
+  channel=sb.channel("items-live").on("postgres_changes",{event:"*",schema:"public",table:"items"},p=>{
+    if(p.eventType==="DELETE"){dropLocal(p.old.collection,p.old.id);}
+    else{setLocal(p.new.collection,p.new.id,p.new.data);}
+    render();
+  }).subscribe();
+}
+
+/* --- Start --- */
+(async()=>{
+  if(!window.supabase||SUPABASE_URL.startsWith("VUL")){$("syncState").textContent="Nog niet gekoppeld aan Supabase (zie SUPABASE_URL in index.html).";return;}
+  sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:false}});
+  await loadAll();subscribe();
+  document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")loadAll();});
+})();
+</script>
+</body>
+</html>
